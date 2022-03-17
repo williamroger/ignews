@@ -1,0 +1,21 @@
+{
+  "id": "c540b66f-5e94-45fc-97a4-2c4e2c198cd0",
+  "uid": "amet-ut-illum",
+  "type": "publication",
+  "data": {
+    "title": [
+      {
+        "type": "heading1",
+        "text": "Utilize vertical eyeballs",
+        "spans": []
+      }
+    ],
+    "content": [
+      {
+        "type": "paragraph",
+        "text": "Dolor labore ut aliquip aliquip aliquip culpa aliqua ullamco nulla.",
+        "spans": []
+      }
+    ]
+  }
+}
