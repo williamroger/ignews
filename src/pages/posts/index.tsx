@@ -1,4 +1,7 @@
+import { GetStaticProps } from 'next';
 import Head from 'next/head';
+import { client } from '../../services/prismicio';
+
 import styles from './styles.module.scss';
 
 export default function Posts() {
@@ -29,4 +32,13 @@ export default function Posts() {
       </main>
     </>
   );
+}
+
+export const getStaticProps: GetStaticProps = async () => {
+  const results = await client.getAllByType('publication');
+
+  console.log('results ', JSON.stringify(results, null, 2));
+  return {
+    props: {}
+  }
 }
