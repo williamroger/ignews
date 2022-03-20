@@ -1,10 +1,20 @@
 import { GetStaticProps } from 'next';
 import Head from 'next/head';
 import { client } from '../../services/prismicio';
-
+import { RichText } from 'prismic-dom';
 import styles from './styles.module.scss';
 
-export default function Posts() {
+type Post = {
+  slug: string;
+  title: string;
+  excerpt: string;
+  updatedAt: string;
+}
+interface PostsProps {
+  posts: Post[],
+}
+
+export default function Posts({ posts }: PostsProps) {
   return (
     <>
       <Head>
@@ -13,21 +23,13 @@ export default function Posts() {
 
       <main className={styles.container}>
         <div className={styles.posts}>
-          <a href="#">
-            <time>12 de maio de 2022</time>
-            <strong>JAMstack: geleia de JavaScript, API e Markup</strong>
-            <p>Uma arquitetura moderna de desenvolvimento, vista como vanguarda na renascença de web sites estáticos, e com nome de um doce popularmente conhecido como GELEIA.</p>
-          </a>
-          <a href="#">
-            <time>12 de maio de 2022</time>
-            <strong>JAMstack: geleia de JavaScript, API e Markup</strong>
-            <p>Uma arquitetura moderna de desenvolvimento, vista como vanguarda na renascença de web sites estáticos, e com nome de um doce popularmente conhecido como GELEIA.</p>
-          </a>
-          <a href="#">
-            <time>12 de maio de 2022</time>
-            <strong>JAMstack: geleia de JavaScript, API e Markup</strong>
-            <p>Uma arquitetura moderna de desenvolvimento, vista como vanguarda na renascença de web sites estáticos, e com nome de um doce popularmente conhecido como GELEIA.</p>
-          </a>
+          {posts.map(post => (
+            <a key={post.slug} href="#">
+              <time>{post.updatedAt}</time>
+              <strong>{post.title}</strong>
+              <p>{post.excerpt}</p>
+            </a>
+          ))}
         </div>
       </main>
     </>
@@ -35,10 +37,26 @@ export default function Posts() {
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const results = await client.getAllByType('publication');
+  const response = await client.getAllByType('publication');
 
-  console.log('results ', JSON.stringify(results, null, 2));
+  const posts = response.map(post => {
+    return {
+      slug: post.uid,
+      title: RichText.asText(post.data.title),
+      excerpt: post.data.content.find(content => content.type === 'paragraph')?.text ?? '',
+      updatedAt: new Date(post.last_publication_date).toLocaleDateString('pt-br', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+      }),
+    }
+  });
+
+  // console.log('posts ', JSON.stringify(response, null, 2));
+
   return {
-    props: {}
+    props: {
+      posts,
+    }
   }
 }
